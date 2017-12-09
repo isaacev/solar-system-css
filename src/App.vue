@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h2>solar-system.css</h2>
+      <h1>solar-system.css</h1>
       <div id="dynamic-solar-system" v-html="output.cache.markup.content"></div>
     </header>
     <main>
@@ -168,23 +168,25 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
-    margin-top: 60px;
   }
 
   header {
+    height: 600px;
     text-align: center;
+    background-color: #131f2a;
+
+    h1 {
+      text-align: center;
+      font-family: 'Roboto Mono', monospace;
+      color: white;
+      font-weight: normal;
+      margin: 0;
+      padding: 2rem 0;
+    }
 
     .solar-system {
       margin: 0 auto;
     }
-  }
-
-  h1, h2 {
-    font-weight: normal;
-  }
-
-  a {
-    color: #42b983;
   }
 
   main {
