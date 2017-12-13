@@ -5,6 +5,12 @@
     </header>
     <main>
       <row v-for="(b, i) in bodies" key="i" v-on:remove="remove(i)" :body="b"></row>
+      <div class="buttons">
+        <shadow-button label="Refresh"></shadow-button>
+        <shadow-button label="Export"></shadow-button>
+      </div>
+      <div class="buttons">
+        <shadow-button label="Add Planet" v-on:click="add()"></shadow-button>
       </div>
     </main>
   </div>
@@ -12,6 +18,7 @@
 
 <script>
   import Row from './Row'
+  import ShadowButton from './ShadowButton'
   import convert from './convert'
   import { debounce, addSystemStyles } from './util'
 
@@ -19,6 +26,7 @@
     name: 'app',
     components: {
       Row,
+      ShadowButton
     },
 
     data () {
