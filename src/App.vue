@@ -7,7 +7,7 @@
       <div class="buttons">
         <shadow-button label="Refresh"></shadow-button>
         <shadow-button label="Export"></shadow-button>
-        <shadow-button label="Add Planet" v-on:click="add()"></shadow-button>
+        <shadow-button label="Add Planet" @click="add()"></shadow-button>
       </div>
       <row v-for="(b, i) in bodies" key="i" v-on:remove="remove(i)" :body="b" :all="bodies"></row>
     </main>

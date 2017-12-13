@@ -1,6 +1,6 @@
 <template>
   <div class="shadow-button-wrapper">
-    <button class="shadow-button" v-on:click="click()" v-bind:disabled="disabled">{{ label }}</button>
+    <button class="shadow-button" @click="click()" v-bind:disabled="disabled">{{ label }}</button>
   </div>
 </template>
 
