@@ -4,11 +4,11 @@
       <h1>solar-system.css</h1>
     </header>
     <main>
-      <row v-for="(b, i) in bodies" key="i" v-on:remove="remove(i)" :body="b"></row>
       <div class="buttons">
         <shadow-button label="Refresh"></shadow-button>
         <shadow-button label="Export"></shadow-button>
       </div>
+      <row v-for="(b, i) in bodies" key="i" v-on:remove="remove(i)" :body="b" :all="bodies"></row>
       <div class="buttons">
         <shadow-button label="Add Planet" v-on:click="add()"></shadow-button>
       </div>
