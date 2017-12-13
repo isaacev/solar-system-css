@@ -53,7 +53,7 @@
       }
 
       &:hover {
-        background: darken(#edefed, 5%);
+        background: darken(#edefed, 3%);
       }
 
       &:focus {
