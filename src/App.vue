@@ -59,6 +59,15 @@
     methods: {
       remove: function (i) {
         this.bodies.splice(i, 1)
+      },
+      add: function () {
+        this.bodies.push({
+          name    : '',
+          texture : '',
+          size    : '',
+          orbit   : '',
+          speed   : ''
+        })
       }
     }
   }
