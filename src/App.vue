@@ -75,7 +75,6 @@
 
     h1 {
       text-align: center;
-      font-family: 'Roboto Mono', monospace;
       color: white;
       font-weight: normal;
       margin: 0;
@@ -90,11 +89,17 @@
   main {
     width: 100%;
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 0 auto 128px;
 
     div.outputs {
       margin-top: 48px;
       display: flex;
+    }
+
+    div.buttons {
+      margin-top: 32px;
+      text-align: center;
+      cursor: default;
     }
   }
 </style>

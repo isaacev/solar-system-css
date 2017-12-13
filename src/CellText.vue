@@ -52,7 +52,7 @@
     position: relative;
     padding: 12px;
     margin: 0 8px;
-    border-bottom: 2px solid #eee;
+    border-bottom: 1px dashed #787f80;
     box-sizing: border-box;
     text-align: left;
     overflow-x: hidden;
@@ -63,8 +63,8 @@
     }
 
     &.focus {
-      background: transparentize(blue, 0.95);
-      border-bottom-color: blue;
+      background: transparentize(#4501ef, 0.95);
+      border-bottom-color: #4501ef;
     }
 
     label {
@@ -72,7 +72,7 @@
       display: block;
       margin-bottom: 6px;
       font-size: 0.9rem;
-      color: gray;
+      color: #787f80;
     }
 
     input {
@@ -84,6 +84,7 @@
       background: none;
       font-size: 1.5rem;
       font-family: inherit;
+      color: #344c4b;
 
       &:focus {
         outline: none;
