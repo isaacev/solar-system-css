@@ -7,11 +7,9 @@
       <div class="buttons">
         <shadow-button label="Refresh"></shadow-button>
         <shadow-button label="Export"></shadow-button>
-      </div>
-      <row v-for="(b, i) in bodies" key="i" v-on:remove="remove(i)" :body="b" :all="bodies"></row>
-      <div class="buttons">
         <shadow-button label="Add Planet" v-on:click="add()"></shadow-button>
       </div>
+      <row v-for="(b, i) in bodies" key="i" v-on:remove="remove(i)" :body="b" :all="bodies"></row>
     </main>
   </div>
 </template>
@@ -61,7 +59,7 @@
         this.bodies.splice(i, 1)
       },
       add: function () {
-        this.bodies.push({
+        this.bodies.unshift({
           name    : '',
           texture : '',
           size    : '',
