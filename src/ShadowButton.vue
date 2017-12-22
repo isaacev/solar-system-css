@@ -42,6 +42,8 @@
       position: relative;
       background: #edefed;
       z-index: 2;
+      transition: top 0.2s;
+      transition: left 0.2s;
 
       &[disabled] {
         border-color: #787f80;
