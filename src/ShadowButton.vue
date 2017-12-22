@@ -52,14 +52,10 @@
         top: 2px;
         left: 2px;
         cursor: default;
-
-        &:hover {
-          background: darken(#edefed, 5%);
-        }
       }
 
       &:hover {
-        background: darken(#edefed, 3%);
+        background: darken(#edefed, 5%);
       }
 
       &:focus {
