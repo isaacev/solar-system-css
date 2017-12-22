@@ -64,7 +64,7 @@
         outline: none;
       }
 
-      &:active {
+      &:hover:active {
         top: 2px;
         left: 2px;
       }
