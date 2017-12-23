@@ -2,14 +2,21 @@
   <div id="app">
     <header>
       <h1>solar-system.css</h1>
+      <!-- <solar-system-viewer :structure="bodies" /> -->
     </header>
     <main>
       <div class="buttons">
-        <shadow-button label="Refresh"></shadow-button>
-        <shadow-button label="Export"></shadow-button>
-        <shadow-button label="Add Planet" @click="add()"></shadow-button>
+        <shadow-button label="Refresh"    @click="refresh()" />
+        <shadow-button label="Export"     @click="download()" />
+        <shadow-button label="Add Planet" @click="add()" />
       </div>
-      <row v-for="(b, i) in bodies" key="i" v-on:remove="remove(i)" :body="b" :all="bodies"></row>
+      <row
+        v-for="(b, i) in bodies"
+        key="i"
+        @remove="remove(i)"
+        :body="b"
+        :all="bodies"
+      />
     </main>
   </div>
 </template>
@@ -17,6 +24,7 @@
 <script>
   import Row from './Row'
   import ShadowButton from './ShadowButton'
+  import SolarSystemViewer from './SolarSystemViewer'
   import convert from './convert'
   import { debounce, addSystemStyles } from './util'
 
@@ -24,48 +32,218 @@
     name: 'app',
     components: {
       Row,
-      ShadowButton
+      ShadowButton,
+      SolarSystemViewer
     },
 
     data () {
       return {
+        markup: '<em>hello world</em>',
         bodies: [
           {
-            name: 'earth',
-            texture: 'blue',
-            size: 48,
-            orbit: 100,
-            speed: 50
+            name    : { value: 'earth', valid: true },
+            texture : { value: 'blue',  valid: true },
+            size    : { value: 48,      valid: true },
+            orbit   : { value: 100,     valid: true },
+            speed   : { value: 3,       valid: true },
+            focus   : { value: 'moon',  valid: true }
           },
           {
-            name: 'venus',
-            texture: 'orange',
-            size: 45,
-            orbit: 200,
-            speed: 60
-          },
-          {
-            name: 'mars',
-            texture: 'red',
-            size: 35,
-            orbit: 300,
-            speed: 100
+            name    : { value: 'moon',  valid: true },
+            texture : { value: 'gray',  valid: true },
+            size    : { value: 10,      valid: true },
+            orbit   : { value: 100,     valid: true },
+            speed   : { value: 10,      valid: true },
+            focus   : { value: 'earth', valid: true }
           }
         ]
       }
     },
+
+    created () {
+      this.validateBodies()
+    },
+
+    watch: {
+      'bodies': {
+        deep: true,
+        handler: function (newVal, oldVal) {
+          console.log(JSON.stringify(oldVal[0], null, '  '), JSON.stringify(newVal[0], null, '  '))
+          let checkValidity = false
+
+          // Only re-check validity the number of bodies has changed or a body
+          // attribute value has changed.
+          if (newVal.length === oldVal.length) {
+            for (let i = 0; i < newVal.length; i++) {
+              checkValidity = (newVal[i].name.value !== oldVal[i].name.value) || checkValidity
+              checkValidity = (newVal[i].texture.value !== oldVal[i].texture.value) || checkValidity
+              checkValidity = (newVal[i].size.value !== oldVal[i].size.value) || checkValidity
+              checkValidity = (newVal[i].orbit.value !== oldVal[i].orbit.value) || checkValidity
+              checkValidity = (newVal[i].speed.value !== oldVal[i].speed.value) || checkValidity
+              checkValidity = (newVal[i].focus.value !== oldVal[i].focus.value) || checkValidity
+            }
+          } else {
+            checkValidity = true
+          }
+
+          if (checkValidity) {
+            console.log('check')
+            this.validateBodies()
+          }
+        }
+      }
+    },
+
     methods: {
       remove: function (i) {
         this.bodies.splice(i, 1)
       },
       add: function () {
         this.bodies.unshift({
-          name    : '',
-          texture : '',
-          size    : '',
-          orbit   : '',
-          speed   : ''
+          name    : { value: null, valid: false},
+          texture : { value: null, valid: false},
+          size    : { value: null, valid: false},
+          orbit   : { value: null, valid: false},
+          speed   : { value: null, valid: false},
+          focus   : { value: null, valid: false}
         })
+      },
+      refresh: function () {
+        console.log('generate markup')
+        console.log('generate stylesheet')
+        console.log('embed markup')
+        console.log('embed stylesheet')
+      },
+      download: function () {
+        // TODO
+      },
+
+      validateBodies: function () {
+        /**
+         * Format validations:
+         * - Checks that each attribute is the correct type
+         * - Checks that each attribute conforms to some basic value
+         *   constraints (ex: positive number, non-empty string)
+         */
+
+        // Check that each body.name is a non-empty string.
+        this.bodies
+          .map(body => body.name)
+          .forEach(name => name.valid = (typeof name.value === 'string' && name.value.length > 0))
+
+        // Check that each body.size is a positive number.
+        this.bodies
+          .map(body => body.size)
+          .forEach(size => size.valid = (typeof size.value === 'number' && size.value >= 0))
+
+        // Check that each body.orbit is a positive number.
+        this.bodies
+          .map(body => body.orbit)
+          .forEach(orbit => orbit.valid = (typeof orbit.value === 'number' && orbit.value >= 0))
+
+        // Check that each body.speed is a positive number.
+        this.bodies
+          .map(body => body.speed)
+          .forEach(speed => speed.valid = (typeof speed.value === 'number' && speed.value >= 0))
+
+        // Check that each body.focus is NULL or a non-empty string.
+        this.bodies
+          .map(body => body.focus)
+          .forEach(focus => focus.valid = focus.value === null || (typeof focus.value === 'string' && focus.value.length > 0))
+
+        /**
+         * Relation validations:
+         * - Checks that body names are unique
+         * - Checks that orbital relationships contain no orbital cycles
+         */
+
+        // Check that each body.name (if not-invalid) is unique.
+        this.bodies
+          .map(body => body.name)
+          .filter(name => name.valid)
+          .forEach(name => {
+            const bodiesWithName = this.bodies.reduce((count, body) => {
+              if (body.name.value === name.value) {
+                return count + 1
+              } else {
+                return count
+              }
+            }, 0)
+
+            if (bodiesWithName > 1) {
+              name.valid = false
+            }
+          })
+
+        // Check that each body.focus (if not already invalid) references a body:
+        // - That exists
+        // - That itself has a valid focus reference
+        // - That the chain of focus references does not contain a reference to
+        //   this body (an orbital cycle)
+        this.bodies
+          .map(body => body.focus)
+          .filter(focus => focus.valid)
+          .map(focus => {
+            // If the following search finds more than one other body with
+            // a name that matches this focus, mark this focus as invalid.
+            // If the search finds no other bodies with a name that matches
+            // this focus, make this focus as invalid.
+            const deref = this.bodies.reduce((deref, body) => {
+              if (body.name.value === focus.value) {
+                if (deref === null) {
+                  return body
+                } else {
+                  focus.valid = false
+                  return deref
+                }
+              } else {
+                return deref
+              }
+            }, null)
+
+            if (deref === null) {
+              focus.valid = false
+            }
+
+            return focus
+          })
+          .filter(focus => focus.valid)
+          .map(focus => {
+            // Any focus reference at this point can be assumed to reference:
+            // - A uniquely named body
+
+            // - Dereference current focus
+            // - If deref is null, current focus is valid
+            // - If deref is invalid, current focus is invalid
+            // - If deref is valid,
+            focus.valid = this.dereference(focus, [focus.value])
+          })
+      },
+
+      dereference: function recurse (focus, seen) {
+        if (focus.valid === false) {
+          return false
+        } else if (focus.value === null) {
+          return true
+        } else if (seen.indexOf(focus.value) > -1) {
+          return false
+        }
+
+        // Find body with name same as focus.value
+        const ref = this.bodies.reduce((ref, body) => {
+          if (body.name.value === focus.value) {
+            return body
+          } else {
+            return ref
+          }
+        }, null)
+
+        if (ref === null) {
+          return false
+        } else {
+          return recurse.call(this, ref.focus, seen.concat(ref.name.value))
+          return false
+        }
       }
     }
   }

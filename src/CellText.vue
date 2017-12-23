@@ -1,11 +1,19 @@
 <template>
-  <div class="cell cell-text" v-bind:class="{ error: !isValid(), focus: isFocused }">
+  <div
+    class="cell cell-text"
+    v-bind:class="{
+      'error'    : !isValid,
+      'focused'  : isFocused,
+      'disabled' : isDisabled
+    }">
+
     <label>{{ label }}</label>
     <input
       type="text"
       v-model="internal"
       @focus="onFocus"
       @blur="onBlur" />
+
   </div>
 </template>
 
@@ -13,34 +21,54 @@
   export default {
     props: [
       'value',
-      'label'
+      'label',
+      'valid'
     ],
     data () {
       return {
-        internal: '',
-        isFocused: false
+        internal   : '',
+        isValid    : true,
+        isFocused  : false,
+        isDisabled : false
       }
     },
     created () {
-      this.internal = this.value.toString()
+      if (typeof this.value === 'string') {
+        this.internal = this.value
+      } else {
+        this.internal = ''
+      }
+
+      this.updateValidity()
     },
     watch: {
       'value': function (newVal) {
-        this.internal = newVal.toString()
+        if (typeof newVal === 'string') {
+          this.internal = newVal
+        } else {
+          this.internal = ''
+        }
       },
       'internal': function (newVal) {
         this.$emit('input', this.internal)
+        this.updateValidity()
+      },
+      'valid': function (newVal, oldVal) {
+        this.updateValidity()
       }
     },
     methods: {
-      onFocus: function () {
-        this.isFocused = true
+      onFocus: function () { this.isFocused = true  },
+      onBlur: function  () { this.isFocused = false },
+      checkParentValidation: function () {
+        if (typeof this.valid === 'boolean') {
+          return this.valid
+        }
+
+        return true
       },
-      onBlur: function () {
-        this.isFocused = false
-      },
-      isValid: function () {
-        return (typeof this.internal === 'string' && this.internal.length > 0)
+      updateValidity: function () {
+        this.isValid = this.checkParentValidation()
       }
     }
   }
@@ -62,7 +90,7 @@
       border-bottom-color: red;
     }
 
-    &.focus {
+    &.focused {
       background: transparentize(#4501ef, 0.95);
       border-bottom-color: #4501ef;
     }

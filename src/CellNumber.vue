@@ -1,5 +1,12 @@
 <template>
-  <div class="cell cell-number" v-bind:class="{ error: !isValid(), focus: isFocused }">
+  <div
+    class="cell cell-number"
+    v-bind:class="{
+      'error'    : !isValid,
+      'focused'  : isFocused,
+      'disabled' : isDisabled
+    }">
+
     <label>{{ label }}</label>
     <input
       type="number"
@@ -8,10 +15,14 @@
       v-model="internal"
       @focus="onFocus"
       @blur="onBlur" />
-    <p class="units" v-if="internal.length > 0">
+
+    <p
+      class="units"
+      v-if="internal.length > 0">
       <span class="offset">{{ internal }}</span>
       <span class="units">{{ units }}</span>
     </p>
+
   </div>
 </template>
 
@@ -20,34 +31,71 @@
     props: [
       'value',
       'label',
-      'units'
+      'units',
+      'valid'
     ],
     data () {
       return {
-        internal: '',
-        isFocused: false
+        internal   : '',
+        parsed     : null,
+        isValid    : true,
+        isFocused  : false,
+        isDisabled : false
       }
     },
     created () {
-      this.internal = this.value.toString()
+      if (typeof this.value === 'number' && !isNaN(this.value)) {
+        this.internal = this.value.toString()
+        this.parsed = this.value
+      } else {
+        this.internal = ''
+        this.parsed = null
+      }
+
+      this.updateValidity()
     },
     watch: {
       'value': function (newVal) {
-        this.internal = newVal.toString()
+        if (typeof newVal === 'number' && !isNaN(this.value)) {
+          this.internal = this.value.toString()
+        } else if (typeof newVal === 'string') {
+          const maybe = parseInt(newVal, 10)
+          if (isNaN(maybe)) {
+            this.internal = ''
+          } else {
+            this.internal = maybe.toString()
+          }
+        } else {
+          this.internal = ''
+        }
       },
       'internal': function (newVal) {
-        this.$emit('input', this.internal)
+        const maybe = parseInt(newVal, 10)
+        if (isNaN(maybe)) {
+          this.parsed = null
+        } else {
+          this.parsed = maybe
+        }
+
+        this.$emit('input', this.parsed)
+        this.updateValidity()
+      },
+      'valid': function (newVal, oldVal) {
+        this.updateValidity()
       }
     },
     methods: {
-      onFocus: function () {
-        this.isFocused = true
+      onFocus: function () { this.isFocused = true  },
+      onBlur: function  () { this.isFocused = false },
+      checkParentValidation: function () {
+        if (typeof this.valid === 'boolean') {
+          return this.valid
+        }
+
+        return true
       },
-      onBlur: function () {
-        this.isFocused = false
-      },
-      isValid: function () {
-        return (typeof this.internal === 'string' && this.internal.length > 0)
+      updateValidity: function () {
+        this.isValid = this.checkParentValidation()
       }
     }
   }
@@ -69,7 +117,7 @@
       border-bottom-color: red;
     }
 
-    &.focus {
+    &.focused {
       background: transparentize(#4501ef, 0.95);
       border-bottom-color: #4501ef;
     }

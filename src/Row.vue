@@ -1,11 +1,38 @@
 <template>
   <div class="row">
-    <cell-text   v-model="body.name"    label="Name" />
-    <cell-text   v-model="body.texture" label="Texture" />
-    <cell-number v-model="body.size"    label="Size"  units="px" />
-    <cell-number v-model="body.orbit"   label="Distance" units="px" />
-    <cell-number v-model="body.speed"   label="Rotations" units="/ min" />
-    <button class="remove" title="Remove" v-on:click="remove()">
+    <cell-text
+      v-model="body.name.value"
+      label="Name"
+      :valid="body.name.valid" />
+    <cell-text
+      v-model="body.texture.value"
+      label="Texture"
+      :valid="body.texture.name" />
+    <cell-number
+      v-model="body.size.value"
+      label="Size"
+      units="px"
+      :valid="body.size.valid" />
+    <cell-number
+      v-model="body.orbit.value"
+      label="Distance"
+      units="px"
+      :valid="body.orbit.valid" />
+    <cell-number
+      v-model="body.speed.value"
+      label="Rotations"
+      units="/ min"
+      :valid="body.speed.valid" />
+    <cell-dropdown
+      v-model="body.focus.value"
+      label="Focus"
+      :options="options()"
+      :valid="body.focus.valid" />
+
+    <button
+      class="remove"
+      title="Remove"
+      @click="remove()">
       <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
         <path fill="currentColor" d="M0 84V56c0-13.3 10.7-24 24-24h112l9.4-18.7c4-8.2 12.3-13.3 21.4-13.3h114.3c9.1 0 17.4 5.1 21.5 13.3L312 32h112c13.3 0 24 10.7 24 24v28c0 6.6-5.4 12-12 12H12C5.4 96 0 90.6 0 84zm415.2 56.7L394.8 467c-1.6 25.3-22.6 45-47.9 45H101.1c-25.3 0-46.3-19.7-47.9-45L32.8 140.7c-.4-6.9 5.1-12.7 12-12.7h358.5c6.8 0 12.3 5.8 11.9 12.7z"></path>
       </svg>
@@ -14,22 +41,94 @@
 </template>
 
 <script>
+  import CellDropdown from './CellDropdown'
   import CellText from './CellText'
   import CellNumber from './CellNumber'
 
   export default {
     components: {
+      CellDropdown,
       CellText,
       CellNumber
     },
     props: [
-      'body'
+      'body',
+      'all'
     ],
     methods: {
       remove: function () {
         this.$emit('remove')
+      },
+      options: function () {
+        return this.all
+          .filter(b => b.name && b.name.length > 0 && b.name !== this.body.name)
+          .map((b, i) => ({ label: b.name, key: i }))
+      },
+      isUniqueName: function (name, bodies) {
+        return 1 === bodies.reduce((t, b) => {
+          return (b.name === name) ? t + 1 : t
+        }, 0)
+      },
+      isValidName: function (name) {
+        if (typeof name !== 'string' || name.length < 1) {
+          return false
+        }
+
+        return this.isUniqueName(name, this.all)
+      },
+      isPositiveNumber: function (num) {
+        if (typeof num === 'number' && !isNaN(num) && num >= 0) {
+          return true
+        } else {
+          return false
+        }
+      },
+      validateFocus: function (focus) {
+        if (focus === null) {
+          return true
+        }
+
+        if (false === this.isUniqueName(focus, this.all)) {
+          return false
+        }
+
+        return hasLegalOrbit(this.body, this.all)
       }
     }
+  }
+
+  function lookup (name, bodies) {
+    for (let i = 0; i < bodies.length; i++) {
+      if (bodies[i].name === name) {
+        return bodies[i]
+      }
+    }
+
+    return null
+  }
+
+  function hasLegalOrbit (body, bodies) {
+    if (body === null) {
+      return true
+    }
+
+    const chain = [body.name]
+    let ptr = body.focus
+
+    while (ptr !== null) {
+      chain.push(ptr)
+      const next = lookup(ptr, bodies)
+      if (next === null) {
+        return true
+      }
+
+      ptr = next.focus
+      if (chain.indexOf(ptr) > -1) {
+        return false
+      }
+    }
+
+    return true
   }
 </script>
 
@@ -57,12 +156,13 @@
         outline: none;
       }
 
-      &:hover svg {
-        color: #777;
+      &:hover svg,
+      &:focus svg {
+        color: #787e7f;
       }
 
       &:active svg {
-        color: #222;
+        color: #344c4b;
       }
 
       svg {
