@@ -62,7 +62,7 @@
       options: function () {
         return this.all
           .filter(b => b.name.value && b.name.value.length > 0 && b.name.value !== this.body.name.value)
-          .map((b, i) => ({ label: b.name.value, key: i }))
+          .map((b, i) => ({ label: b.name.value, value: b.name.value }))
       }
     }
   }

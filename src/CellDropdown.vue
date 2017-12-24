@@ -13,7 +13,7 @@
       v-model="internal"
       @focus="onFocus"
       @blur="onBlur"
-      placeholder="center" />
+      placeholder="none" />
 
     <ol class="options">
       <li
@@ -65,7 +65,7 @@
       onFocus: function () { this.isFocused = true  },
       onBlur: function  () { this.isFocused = false },
       choose: function (choice) {
-        this.internal = choice.label
+        this.internal = choice.value
       }
     }
   }
