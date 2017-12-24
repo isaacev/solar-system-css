@@ -2,7 +2,7 @@
   <div
     class="cell cell-number"
     v-bind:class="{
-      'error'    : !isValid,
+      'error'    : !valid,
       'focused'  : isFocused,
       'disabled' : isDisabled
     }">
@@ -38,7 +38,6 @@
       return {
         internal   : '',
         parsed     : null,
-        isValid    : true,
         isFocused  : false,
         isDisabled : false
       }
@@ -51,8 +50,6 @@
         this.internal = ''
         this.parsed = null
       }
-
-      this.updateValidity()
     },
     watch: {
       'value': function (newVal) {
@@ -78,25 +75,11 @@
         }
 
         this.$emit('input', this.parsed)
-        this.updateValidity()
-      },
-      'valid': function (newVal, oldVal) {
-        this.updateValidity()
       }
     },
     methods: {
       onFocus: function () { this.isFocused = true  },
-      onBlur: function  () { this.isFocused = false },
-      checkParentValidation: function () {
-        if (typeof this.valid === 'boolean') {
-          return this.valid
-        }
-
-        return true
-      },
-      updateValidity: function () {
-        this.isValid = this.checkParentValidation()
-      }
+      onBlur: function  () { this.isFocused = false }
     }
   }
 </script>

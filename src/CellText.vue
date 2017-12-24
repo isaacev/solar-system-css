@@ -2,7 +2,7 @@
   <div
     class="cell cell-text"
     v-bind:class="{
-      'error'    : !isValid,
+      'error'    : !valid,
       'focused'  : isFocused,
       'disabled' : isDisabled
     }">
@@ -27,7 +27,6 @@
     data () {
       return {
         internal   : '',
-        isValid    : true,
         isFocused  : false,
         isDisabled : false
       }
@@ -38,8 +37,6 @@
       } else {
         this.internal = ''
       }
-
-      this.updateValidity()
     },
     watch: {
       'value': function (newVal) {
@@ -51,25 +48,11 @@
       },
       'internal': function (newVal) {
         this.$emit('input', this.internal)
-        this.updateValidity()
-      },
-      'valid': function (newVal, oldVal) {
-        this.updateValidity()
       }
     },
     methods: {
       onFocus: function () { this.isFocused = true  },
-      onBlur: function  () { this.isFocused = false },
-      checkParentValidation: function () {
-        if (typeof this.valid === 'boolean') {
-          return this.valid
-        }
-
-        return true
-      },
-      updateValidity: function () {
-        this.isValid = this.checkParentValidation()
-      }
+      onBlur: function  () { this.isFocused = false }
     }
   }
 </script>
