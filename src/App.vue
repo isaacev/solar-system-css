@@ -131,6 +131,10 @@
           .map(body => body.name)
           .forEach(name => name.valid = (typeof name.value === 'string' && name.value.length > 0))
 
+        this.bodies
+          .map(body => body.texture)
+          .forEach(texture => texture.valid = (typeof texture.value === 'string' && texture.value.length > 0))
+
         // Check that each body.size is a positive number.
         this.bodies
           .map(body => body.size)
