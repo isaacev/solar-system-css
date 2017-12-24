@@ -17,11 +17,13 @@
 
     <ol class="options">
       <li
+        class="option"
         v-for="(o, i) in options"
         key="i"
         @mousedown="choose(o)">
         <span>{{ o.label }}</span>
       </li>
+      <li v-if="options.length === 0" class="nothing">nothing</li>
     </ol>
 
   </div>
@@ -154,10 +156,15 @@
         background: #edefed;
         position: relative;
         z-index: 2;
+      }
 
-        &:hover {
-          background-color: darken(#edefed, 5%);
-        }
+      li.option:hover {
+        background-color: darken(#edefed, 5%);
+      }
+
+      li.nothing {
+        font-style: italic;
+        color: darken(#edefed, 40%);
       }
 
       &:before {
