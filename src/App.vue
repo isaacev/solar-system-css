@@ -242,7 +242,6 @@
           return false
         } else {
           return recurse.call(this, ref.focus, seen.concat(ref.name.value))
-          return false
         }
       }
     }
