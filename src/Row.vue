@@ -61,8 +61,8 @@
       },
       options: function () {
         return this.all
-          .filter(b => b.name && b.name.length > 0 && b.name !== this.body.name)
-          .map((b, i) => ({ label: b.name, key: i }))
+          .filter(b => b.name.value && b.name.value.length > 0 && b.name.value !== this.body.name.value)
+          .map((b, i) => ({ label: b.name.value, key: i }))
       }
     }
   }
