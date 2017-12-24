@@ -63,72 +63,8 @@
         return this.all
           .filter(b => b.name && b.name.length > 0 && b.name !== this.body.name)
           .map((b, i) => ({ label: b.name, key: i }))
-      },
-      isUniqueName: function (name, bodies) {
-        return 1 === bodies.reduce((t, b) => {
-          return (b.name === name) ? t + 1 : t
-        }, 0)
-      },
-      isValidName: function (name) {
-        if (typeof name !== 'string' || name.length < 1) {
-          return false
-        }
-
-        return this.isUniqueName(name, this.all)
-      },
-      isPositiveNumber: function (num) {
-        if (typeof num === 'number' && !isNaN(num) && num >= 0) {
-          return true
-        } else {
-          return false
-        }
-      },
-      validateFocus: function (focus) {
-        if (focus === null) {
-          return true
-        }
-
-        if (false === this.isUniqueName(focus, this.all)) {
-          return false
-        }
-
-        return hasLegalOrbit(this.body, this.all)
       }
     }
-  }
-
-  function lookup (name, bodies) {
-    for (let i = 0; i < bodies.length; i++) {
-      if (bodies[i].name === name) {
-        return bodies[i]
-      }
-    }
-
-    return null
-  }
-
-  function hasLegalOrbit (body, bodies) {
-    if (body === null) {
-      return true
-    }
-
-    const chain = [body.name]
-    let ptr = body.focus
-
-    while (ptr !== null) {
-      chain.push(ptr)
-      const next = lookup(ptr, bodies)
-      if (next === null) {
-        return true
-      }
-
-      ptr = next.focus
-      if (chain.indexOf(ptr) > -1) {
-        return false
-      }
-    }
-
-    return true
   }
 </script>
 
