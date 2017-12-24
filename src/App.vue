@@ -6,8 +6,8 @@
     </header>
     <main>
       <div class="buttons">
-        <shadow-button label="Refresh"    @click="refresh()" />
-        <shadow-button label="Export"     @click="download()" />
+        <shadow-button label="Refresh"    @click="refresh()"  :disabled="!allInputsValid" />
+        <shadow-button label="Export"     @click="download()" :disabled="!allInputsValid" />
         <shadow-button label="Add Planet" @click="add()" />
       </div>
       <row
@@ -40,6 +40,7 @@
       return {
         markup: '<em>hello world</em>',
         validationCache: null,
+        allInputsValid: true,
         bodies: [
           {
             name    : { value: 'earth', valid: true },
@@ -125,6 +126,7 @@
         console.log('check validity')
         if (this.hasStaleValidationCache()) {
           this.validateBodies()
+          this.allInputsValid = this.areAllInputsValid()
           this.refreshValidationCache()
         }
       },
@@ -264,6 +266,19 @@
         } else {
           return recurse.call(this, ref.focus, seen.concat(ref.name.value))
         }
+      },
+
+      areAllInputsValid: function () {
+        for (let body of this.bodies) {
+          if (!body.name.valid)    { return false }
+          if (!body.texture.valid) { return false }
+          if (!body.size.valid)    { return false }
+          if (!body.orbit.valid)   { return false }
+          if (!body.speed.valid)   { return false }
+          if (!body.focus.valid)   { return false }
+        }
+
+        return true
       }
     }
   }
