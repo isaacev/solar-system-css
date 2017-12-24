@@ -184,6 +184,10 @@
           .map(body => body.focus)
           .filter(focus => focus.valid)
           .map(focus => {
+            if (focus.value === null) {
+              return focus
+            }
+
             // If the following search finds more than one other body with
             // a name that matches this focus, mark this focus as invalid.
             // If the search finds no other bodies with a name that matches
