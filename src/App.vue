@@ -39,6 +39,7 @@
     data () {
       return {
         markup: '<em>hello world</em>',
+        validationCache: null,
         bodies: [
           {
             name    : { value: 'earth', valid: true },
@@ -46,7 +47,7 @@
             size    : { value: 48,      valid: true },
             orbit   : { value: 100,     valid: true },
             speed   : { value: 3,       valid: true },
-            focus   : { value: 'moon',  valid: true }
+            focus   : { value: null,    valid: true }
           },
           {
             name    : { value: 'moon',  valid: true },
@@ -61,35 +62,15 @@
     },
 
     created () {
-      this.validateBodies()
+      // this.validateBodies()
     },
 
     watch: {
       'bodies': {
         deep: true,
-        handler: function (newVal, oldVal) {
-          console.log(JSON.stringify(oldVal[0], null, '  '), JSON.stringify(newVal[0], null, '  '))
-          let checkValidity = false
-
-          // Only re-check validity the number of bodies has changed or a body
-          // attribute value has changed.
-          if (newVal.length === oldVal.length) {
-            for (let i = 0; i < newVal.length; i++) {
-              checkValidity = (newVal[i].name.value !== oldVal[i].name.value) || checkValidity
-              checkValidity = (newVal[i].texture.value !== oldVal[i].texture.value) || checkValidity
-              checkValidity = (newVal[i].size.value !== oldVal[i].size.value) || checkValidity
-              checkValidity = (newVal[i].orbit.value !== oldVal[i].orbit.value) || checkValidity
-              checkValidity = (newVal[i].speed.value !== oldVal[i].speed.value) || checkValidity
-              checkValidity = (newVal[i].focus.value !== oldVal[i].focus.value) || checkValidity
-            }
-          } else {
-            checkValidity = true
-          }
-
-          if (checkValidity) {
-            console.log('check')
-            this.validateBodies()
-          }
+        immediate: true,
+        handler: function (newVal) {
+          this.checkValidity()
         }
       }
     },
@@ -118,7 +99,43 @@
         // TODO
       },
 
+      createDigest: function (contents) {
+        return JSON.stringify(contents, (key, val) => {
+          if (key === 'valid') {
+            return undefined
+          } else {
+            return val
+          }
+        })
+      },
+
+      hasStaleValidationCache: function () {
+        console.log('is cache stale?')
+        if (this.validationCache === this.createDigest(this.bodies)) {
+          console.log('no')
+          return false
+        }
+
+        console.log('yes')
+        return true
+      },
+
+      refreshValidationCache: function () {
+        console.log('refresh cache')
+        this.validationCache = this.createDigest(this.bodies)
+      },
+
+      checkValidity: function () {
+        console.log('check validity')
+        if (this.hasStaleValidationCache()) {
+          this.validateBodies()
+          this.refreshValidationCache()
+        }
+      },
+
       validateBodies: function () {
+        console.log('validate bodies')
+
         /**
          * Format validations:
          * - Checks that each attribute is the correct type
