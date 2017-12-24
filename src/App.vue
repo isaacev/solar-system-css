@@ -220,7 +220,7 @@
             // - If deref is null, current focus is valid
             // - If deref is invalid, current focus is invalid
             // - If deref is valid,
-            focus.valid = this.dereference(focus, [focus.value])
+            focus.valid = this.dereference(focus, [])
           })
       },
 
