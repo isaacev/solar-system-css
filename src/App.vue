@@ -61,10 +61,6 @@
       }
     },
 
-    created () {
-      // this.validateBodies()
-    },
-
     watch: {
       'bodies': {
         deep: true,
