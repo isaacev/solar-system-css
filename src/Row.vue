@@ -7,7 +7,7 @@
     <cell-text
       v-model="body.texture.value"
       label="Texture"
-      :valid="body.texture.name" />
+      :valid="body.texture.valid" />
     <cell-number
       v-model="body.size.value"
       label="Size"
