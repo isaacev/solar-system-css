@@ -106,13 +106,12 @@
       },
 
       hasStaleValidationCache: function () {
-        console.log('is cache stale?')
         if (this.validationCache === this.createDigest(this.bodies)) {
-          console.log('no')
+          console.log('is cache stale? - no')
           return false
         }
 
-        console.log('yes')
+        console.log('is cache stale? - yes')
         return true
       },
 
