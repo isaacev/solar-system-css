@@ -150,7 +150,5 @@ function indent (string) {
   return '\n' + string.trim().split('\n').map(l => '  ' + l).join('\n') + '\n'
 }
 
-export default {
-  toSCSS: toSolarSystemSCSS,
-  toHTML: toSolarSystemHTML
-}
+export const toHTML = toSolarSystemHTML
+export const toSCSS = toSolarSystemSCSS
