@@ -1,4 +1,4 @@
-function toSolarSystemSCSS (id, diam, bodies) {
+function toSolarSystemSCSS (bodies, diam) {
   // $id     : 'system';
   // $diam   : 300px;
   // $earth  : ('earth',   0px,  0s, 64px, blue);
@@ -17,7 +17,7 @@ function toSolarSystemSCSS (id, diam, bodies) {
     solarSystemLibrary(),
     lists.join('\n'),
     `$bodies\t: (${names.join(', ')});`,
-    `@include solar-system('${id}', ${diam}px, $bodies);`
+    `@include solar-system('system', ${diam}px, $bodies);`
   ].join('\n')
 }
 
@@ -136,8 +136,8 @@ function solarSystemLibrary () {
   ].join('\n')
 }
 
-function toSolarSystemHTML (id, bodies) {
-  return `<div id="${id}" class="solar-system">` + indent(bodies.map(toBodyHTML).join('\n')) + '</div>'
+function toSolarSystemHTML (bodies) {
+  return `<div id="system" class="solar-system">` + indent(bodies.map(toBodyHTML).join('\n')) + '</div>'
 }
 
 function toBodyHTML (body) {
