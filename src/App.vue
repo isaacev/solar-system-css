@@ -38,7 +38,6 @@
 
     data () {
       return {
-        markup: '<em>hello world</em>',
         validationCache: null,
         allInputsValid: true,
         bodies: [
