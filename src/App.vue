@@ -2,7 +2,7 @@
   <div id="app">
     <header>
       <h1>solar-system.css</h1>
-      <!-- <solar-system-viewer :structure="bodies" /> -->
+      <solar-system-viewer :structure="bodies" :disabled="!allInputsValid" />
     </header>
     <main>
       <div class="buttons">

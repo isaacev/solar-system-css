@@ -1,12 +1,17 @@
 <template>
-  <div class="solar-system-viewer"></div>
+  <div
+    class="solar-system-viewer"
+    v-bind:class="{
+      'disabled': disabled
+    }" />
 </template>
 
 <script>
   export default {
     name: 'solar-system-viewer',
     props: [
-      'structure'
+      'structure',
+      'disabled'
     ],
     watch: {
       structure: {
