@@ -295,7 +295,8 @@
   }
 
   header {
-    height: 600px;
+    min-height: 600px;
+    padding-bottom: 32px;
     text-align: center;
     background-color: #131f2a;
 

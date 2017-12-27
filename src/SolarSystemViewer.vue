@@ -85,3 +85,11 @@
     return true
   }
 </script>
+
+<style lang="scss">
+  div.solar-system-viewer {
+    width: 600px;
+    height: 600px;
+    margin: 0 auto;
+  }
+</style>
