@@ -7,82 +7,106 @@
 </template>
 
 <script>
+  import { debounce } from './util'
+  import { toSCSS, toHTML } from './convert'
+
   export default {
     name: 'solar-system-viewer',
     props: [
       'structure',
       'disabled'
     ],
+
+    created: function () {
+      this.update()
+      this.debouncedUpdate = debounce(this.update.bind(this), 1000)
+    },
+
     watch: {
       structure: {
         deep: true,
         handler: function (newVal, oldVal) {
-          // console.log('CHANGED')
+          if (this.disabled === false) {
+            try {
+              this.debouncedUpdate()
+            } catch (err) {
+              if (err !== 'invalid') {
+                throw err
+              } else {
+                console.error('tried to render invalid structure')
+              }
+            }
+          }
         }
       }
     },
-    created () {
-      const struct = deepCopy(this.structure)
-      const nested = attachSatellites(struct)
 
-      console.log(JSON.stringify(nested, null, '  '))
-    }
-  }
+    methods: {
+      update: function () {
+        /**
+         * (Assumes that structure has already been determined to be legal)
+         *
+         * 1. Convert flat structure to nested structure
+         * 2. Convert nested structure to HTML
+         * 3. Convert nested structure to SCSS
+         * 4. Convert SCSS to CSS
+         * 5. Load HTML into view
+         * 6. Load CSS into global stylesheet
+         */
 
-  function deepCopy (obj) {
-    return JSON.parse(JSON.stringify(obj))
-  }
-
-  function attachSatellites (bodies) {
-    const mapping = bodies.reduce((mapping, b) => {
-      mapping[b.name] = b
-      b.satellites = []
-      return mapping
-    }, {})
-
-    bodies.forEach((b) => {
-      if (b.focus !== null) {
-        mapping[b.focus].satellites.push(b)
-      }
-    })
-
-    return bodies
-  }
-
-  function hasLegalStructure (struct, parent={name: null}, seen=[]) {
-    if (Array.isArray(struct) === false) {
-      return false
-    }
-
-    try {
-      struct.forEach((body) => {
-        if (seen.indexOf(body) > -1) {
-          throw 'illegal'
-        } else {
-          seen.push(body)
-        }
-
-        if (typeof body.name    !== 'string') { throw 'illegal' }
-        if (typeof body.texture !== 'string') { throw 'illegal' }
-        if (typeof body.size    !== 'number') { throw 'illegal' }
-        if (typeof body.orbit   !== 'number') { throw 'illegal' }
-        if (typeof body.speed   !== 'number') { throw 'illegal' }
-
-        if (Array.isArray(body.satellites)) {
-          if (hasLegalStructure(body.satellites, body, seen) === false) {
-            throw 'illegal'
+        // 1. Convert flat structure to nested structure by:
+        const diam = 400
+        const nested = simplifyBodies(this.structure).reduce((roots, body, _, bodies) => {
+          if (body.focus === null) {
+            roots.push(body)
+            return roots
           }
-        }
-      })
-    } catch (err) {
-      if (err === 'illegal') {
-        return false
-      } else {
-        throw err
+
+          // Find whatever body this body orbits around.
+          for (let other of bodies) {
+            if (other.name === body.focus) {
+              if (other.hasOwnProperty('satellites') === false) {
+                other.satellites = []
+              }
+
+              other.satellites.push(body)
+              return roots
+            }
+          }
+
+          throw 'invalid'
+        }, [])
+
+        const html = toHTML(nested)
+        const scss = toSCSS(nested, diam)
+
+        console.log(html)
       }
     }
+  }
 
-    return true
+  function simplifyBodies (bodies) {
+    /**
+     * Removes `valid` flags from body properties. If a property is invalid,
+     * throw an error.
+     */
+    return bodies.map(original => {
+      const simple = {}
+      let isValid = true
+
+      simple.name    = original.name.valid    ? original.name.value    : (isValid = false)
+      simple.texture = original.texture.valid ? original.texture.value : (isValid = false)
+      simple.size    = original.size.valid    ? original.size.value    : (isValid = false)
+      simple.orbit   = original.orbit.valid   ? original.orbit.value   : (isValid = false)
+      simple.speed   = original.speed.valid   ? original.speed.value   : (isValid = false)
+      simple.focus   = original.focus.valid   ? original.focus.value   : (isValid = false)
+
+      if (isValid === false) {
+        throw 'invalid'
+      }
+
+      return simple
+    })
   }
 </script>
 
