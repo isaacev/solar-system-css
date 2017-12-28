@@ -37,25 +37,53 @@
     },
 
     data () {
+      const au = 300
+      const yr = 50
+      const dm = 10
+
       return {
         validationCache: null,
         allInputsValid: true,
         bodies: [
           {
-            name    : { value: 'earth', valid: true },
-            texture : { value: 'blue',  valid: true },
-            size    : { value: 48,      valid: true },
-            orbit   : { value: 100,     valid: true },
-            speed   : { value: 3,       valid: true },
-            focus   : { value: null,    valid: true }
+            name:    { valid: true, value: 'sun' },
+            orbit:   { valid: true, value: 0.0 * au },
+            speed:   { valid: true, value: 0.0 * yr },
+            size:    { valid: true, value: 4.0 * dm },
+            texture: { valid: true, value: 'bg(#FEC163, #DE4313)' },
+            focus:   { valid: true, value: null }
           },
           {
-            name    : { value: 'moon',  valid: true },
-            texture : { value: 'gray',  valid: true },
-            size    : { value: 10,      valid: true },
-            orbit   : { value: 100,     valid: true },
-            speed   : { value: 10,      valid: true },
-            focus   : { value: 'earth', valid: true }
+            name:    { valid: true, value: 'mercury' },
+            orbit:   { valid: true, value: 0.4 * au },
+            speed:   { valid: true, value: 0.2 * yr },
+            size:    { valid: true, value: 0.6 * dm },
+            texture: { valid: true, value: 'bg(#ECF0F1, #95A5A6)' },
+            focus:   { valid: true, value: 'sun' }
+          },
+          {
+            name:    { valid: true, value: 'venus' },
+            orbit:   { valid: true, value: 0.7 * au },
+            speed:   { valid: true, value: 0.6 * yr },
+            size:    { valid: true, value: 0.9 * dm },
+            texture: { valid: true, value: 'bg(#FAD7A1, #E96D71)' },
+            focus:   { valid: true, value: 'sun' }
+          },
+          {
+            name:    { valid: true, value: 'earth' },
+            orbit:   { valid: true, value: 1.0 * au },
+            speed:   { valid: true, value: 1.0 * yr },
+            size:    { valid: true, value: 1.0 * dm },
+            texture: { valid: true, value: 'bg(#5EFCE8, #736EFE)' },
+            focus:   { valid: true, value: 'sun' }
+          },
+          {
+            name:    { valid: true, value: 'moon' },
+            orbit:   { valid: true, value: 0.1 * au },
+            speed:   { valid: true, value: 0.1 * yr },
+            size:    { valid: true, value: 0.3 * dm },
+            texture: { valid: true, value: 'bg(#ECF0F1, #95A5A6)' },
+            focus:   { valid: true, value: 'earth' }
           }
         ]
       }
