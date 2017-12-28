@@ -136,6 +136,31 @@ function solarSystemLibrary () {
   ].join('\n')
 }
 
+let sass = null
+
+function toSolarSystemCSS (bodies, diam, cb) {
+  const scss = toSolarSystemSCSS(bodies, diam)
+
+  if (sass === null) {
+    sass = new Sass()
+  }
+
+  sass.compile(scss, (result) => {
+    if (result && result.status === 0) {
+      return void cb(null, result.text)
+    } else if (result && result.message) {
+      return void cb({
+        line: result.line,
+        message: result.message
+      })
+    } else {
+      return void cb({
+        message: 'unknown internal SCSS error'
+      })
+    }
+  })
+}
+
 function toSolarSystemHTML (bodies) {
   return `<div id="system" class="solar-system">` + indent(bodies.map(toBodyHTML).join('\n')) + '</div>'
 }
@@ -152,3 +177,4 @@ function indent (string) {
 
 export const toHTML = toSolarSystemHTML
 export const toSCSS = toSolarSystemSCSS
+export const toCSS  = toSolarSystemCSS
