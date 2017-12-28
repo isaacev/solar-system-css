@@ -16,7 +16,7 @@ function toSolarSystemSCSS (bodies, diam) {
   return [
     solarSystemLibrary(),
     lists.join('\n'),
-    `$bodies\t: (${names.join(', ')});`,
+    `$bodies\t: (${names.join(', ')},);`,
     `@include solar-system('system', ${diam}px, $bodies);`
   ].join('\n')
 }
