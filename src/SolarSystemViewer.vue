@@ -3,12 +3,13 @@
     class="solar-system-viewer"
     v-bind:class="{
       'disabled': disabled
-    }" />
+    }"
+    v-html="html" />
 </template>
 
 <script>
   import { debounce } from './util'
-  import { toSCSS, toHTML } from './convert'
+  import { toSCSS, toHTML, toCSS } from './convert'
 
   export default {
     name: 'solar-system-viewer',
@@ -17,9 +18,17 @@
       'disabled'
     ],
 
+    data () {
+      return {
+        html: '',
+        scss: '',
+        css: ''
+      }
+    },
+
     created: function () {
       this.update()
-      this.debouncedUpdate = debounce(this.update.bind(this), 1000)
+      this.debouncedUpdate = debounce(this.update.bind(this), 200)
     },
 
     watch: {
@@ -56,7 +65,8 @@
 
         // 1. Convert flat structure to nested structure by:
         const diam = 400
-        const nested = simplifyBodies(this.structure).reduce((roots, body, _, bodies) => {
+        const simple = simplifyBodies(this.structure)
+        const nested = simple.reduce((roots, body, _, bodies) => {
           if (body.focus === null) {
             roots.push(body)
             return roots
@@ -78,9 +88,21 @@
         }, [])
 
         const html = toHTML(nested)
-        const scss = toSCSS(nested, diam)
+        const scss = toSCSS(simple, diam)
 
-        console.log(html)
+        toCSS(simple, diam, (err, css) => {
+          if (err !== null) {
+            console.log(scss)
+            console.error(err)
+          } else {
+            this.html = html
+            this.scss = scss
+            this.css = css
+
+            const sheet = document.querySelector('style#solar-system-styles')
+            sheet.innerHTML = css
+          }
+        })
       }
     }
   }
